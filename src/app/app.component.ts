@@ -1,16 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { ExchangeRateService } from './services/exchange-rate.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import { Meta } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, FormsModule, DecimalPipe, KeyValuePipe],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+    selector: 'app-root',
+    imports: [FormsModule, DecimalPipe, KeyValuePipe],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   exchangeRates: any = {};
