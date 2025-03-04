@@ -1,0 +1,85 @@
+<div
+  class="h-screen bg-gradient-to-br from-blue-50 to-white p-4 sm:p-6 lg:p-8 overflow-hidden flex items-center justify-center">
+  <div class="w-full max-w-xl bg-white rounded-2xl shadow-xl p-4 sm:p-6">
+    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-4 sm:mb-6">
+      Currency Converter
+    </h2>
+
+    <!-- Main Content -->
+    <div class="space-y-4 sm:space-y-6">
+      <!-- Amount Input -->
+      <div class="bg-gray-50 p-3 sm:p-4 rounded-xl">
+        <label for="amount" class="block text-sm font-semibold text-gray-700 mb-1">
+          Enter Amount
+        </label>
+        <div class="relative">
+          <input id="amount" type="number" [(ngModel)]="amount" (input)="convertCurrency()"
+            class="w-full p-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="0.00" />
+        </div>
+      </div>
+
+      <!-- Currency Selection -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <!-- From Currency -->
+        <div class="relative">
+          <label for="fromCurrency" class="block text-sm font-semibold text-gray-700 mb-1">
+            From
+          </label>
+          <select id="fromCurrency" [(ngModel)]="fromCurrency" (change)="convertCurrency()"
+            class="w-full p-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all appearance-none">
+            @for (currency of exchangeRates | keyvalue; track $index) {
+            <option [value]="currency.key">{{ currency.key }}</option>
+            }
+          </select>
+          <div class="absolute inset-y-0 right-0 top-5 flex items-center pr-3 pointer-events-none">
+            <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- To Currency -->
+        <div class="relative">
+          <label for="toCurrency" class="block text-sm font-semibold text-gray-700 mb-1">
+            To
+          </label>
+          <select id="toCurrency" [(ngModel)]="toCurrency" (change)="convertCurrency()"
+            class="w-full p-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all appearance-none">
+            @for (currency of exchangeRates | keyvalue; track $index) {
+            <option [value]="currency.key">{{ currency.key }}</option>
+            }
+          </select>
+          <div class="absolute inset-y-0 right-0 top-5 flex items-center pr-3 pointer-events-none">
+            <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Section -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-xl space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+          <span class="text-sm font-medium text-gray-600">Converted Amount</span>
+          <span class="text-lg sm:text-xl font-bold text-blue-600">
+            {{ convertedAmount | number:'1.2-2' }} {{ toCurrency }}
+          </span>
+        </div>
+
+        <div class="border-t border-blue-100 pt-3">
+          <p class="text-sm text-gray-600">
+            {{ amount }} {{ fromCurrency }} = {{ convertedAmount | number:'1.2-2' }} {{ toCurrency }}
+          </p>
+          <p class="text-xs text-gray-500 mt-1 italic">
+            {{ getAmountInWords(convertedAmount) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
