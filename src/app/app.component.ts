@@ -3,6 +3,7 @@ import { ExchangeRateService } from './services/exchange-rate.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import { Meta } from '@angular/platform-browser';
+import { TrackService } from './services/track.service';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,7 @@ import { Meta } from '@angular/platform-browser';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+  title = 'currency-converter';
   exchangeRates: any = {};
   amount: number = 1;
   fromCurrency: string = 'USD';
@@ -18,6 +20,7 @@ export class AppComponent implements OnInit {
   convertedAmount: number = 0;
 
   meta = inject(Meta);
+  trackService = inject(TrackService);
   exchangeRateService = inject(ExchangeRateService);
 
   constructor() {
@@ -54,15 +57,16 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.exchangeRateService.getExchangeRates().subscribe(
-      (response) => {
+    this.trackService.trackProjectVisit(this.title);
+    this.exchangeRateService.getExchangeRates().subscribe({
+      next: (response) => {
         this.exchangeRates = response.conversion_rates;
         this.convertCurrency();
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching exchange rates', error);
-      }
-    );
+      },
+    });
   }
 
   convertCurrency(): void {
