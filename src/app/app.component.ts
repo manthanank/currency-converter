@@ -22,6 +22,12 @@ export class AppComponent implements OnInit {
   toCurrency = signal<string>('INR');
   visitorCount = signal<number>(0);
 
+  // Loading and error states
+  isLoading = signal<boolean>(false);
+  error = signal<string | null>(null);
+  isVisitorCountLoading = signal<boolean>(false);
+  visitorCountError = signal<string | null>(null);
+
   // Add computed signal for convertedAmount
   convertedAmount = computed(() => {
     const rates = this.exchangeRates();
@@ -83,23 +89,37 @@ export class AppComponent implements OnInit {
   }
 
   private trackVisit(): void {
+    this.isVisitorCountLoading.set(true);
+    this.visitorCountError.set(null);
+
     this.trackService.trackProjectVisit(this.title).subscribe({
       next: (response: Visit) => {
         this.visitorCount.set(response.uniqueVisitors);
+        this.isVisitorCountLoading.set(false);
       },
       error: (err: Error) => {
         console.error('Failed to track visit:', err);
+        this.visitorCountError.set('Failed to load visitor count');
+        this.isVisitorCountLoading.set(false);
       },
     });
   }
 
   private fetchExchangeRates(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
     this.exchangeRateService.getExchangeRates(this.fromCurrency()).subscribe({
       next: (response) => {
         this.exchangeRates.set(response.conversion_rates);
+        this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error fetching exchange rates', error);
+        this.error.set(
+          'Failed to fetch exchange rates. Please try again later.'
+        );
+        this.isLoading.set(false);
       },
     });
   }
@@ -116,6 +136,15 @@ export class AppComponent implements OnInit {
 
   updateToCurrency(currency: string): void {
     this.toCurrency.set(currency);
+  }
+
+  // Retry methods for error states
+  retryFetchRates(): void {
+    this.fetchExchangeRates();
+  }
+
+  retryVisitorCount(): void {
+    this.trackVisit();
   }
 
   getAmountInWords(amount: number): string {
