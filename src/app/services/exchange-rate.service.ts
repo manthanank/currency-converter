@@ -3,18 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-const API_KEY = environment.API_KEY;
-
 @Injectable({
   providedIn: 'root',
 })
 export class ExchangeRateService {
+  private apiUrl = environment.backendUrl;
   http = inject(HttpClient);
+  
   constructor() {}
 
-  getExchangeRates(): Observable<any> {
+  getExchangeRates(baseCurrency: string = 'USD'): Observable<any> {
     return this.http.get<any>(
-      `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`
+      `${this.apiUrl}/api/exchange-rates?base=${baseCurrency}`
     );
   }
 }

@@ -94,7 +94,7 @@ export class AppComponent implements OnInit {
   }
 
   private fetchExchangeRates(): void {
-    this.exchangeRateService.getExchangeRates().subscribe({
+    this.exchangeRateService.getExchangeRates(this.fromCurrency()).subscribe({
       next: (response) => {
         this.exchangeRates.set(response.conversion_rates);
       },
@@ -111,6 +111,7 @@ export class AppComponent implements OnInit {
 
   updateFromCurrency(currency: string): void {
     this.fromCurrency.set(currency);
+    this.fetchExchangeRates(); // Refetch with new base currency
   }
 
   updateToCurrency(currency: string): void {

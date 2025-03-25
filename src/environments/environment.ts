@@ -1,7 +1,5 @@
-declare const apiKey: string;
-
 export const environment = {
   production: false,
-  API_KEY: apiKey,
+  backendUrl: 'https://currency-converter-api.vercel.app',
   trackingApiUrl: 'https://visitor-tracking-api.vercel.app/api/visit',
 };
