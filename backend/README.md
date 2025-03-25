@@ -142,7 +142,7 @@ The server will start on port 5000 (or the port specified in your .env file).
 This API is deployed on Vercel. You can use the following URL for production:
 
 ```text
-https://currency-converter-api.vercel.app
+https://currency-converter-backend-app-api.vercel.app
 ```
 
 ## Error Handling
