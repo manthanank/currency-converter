@@ -45,51 +45,73 @@ Ensure you have Node.js and Angular CLI installed on your machine.
    npm install
    ```
 
-3. Set up Tailwind CSS:
-   If not already configured, follow [Tailwind CSS Setup Guide](https://tailwindcss.com/docs/guides/angular) to integrate Tailwind CSS into your Angular project.
-
-4. Get an API key from a currency exchange service, such as [ExchangeRate-API](https://www.exchangerate-api.com/) or [exchangeratesapi.io](https://exchangeratesapi.io/), and replace `YOUR_API_KEY` while building the app.
+3. Install backend dependencies:
 
    ```bash
-   ng build --define "apiKey='YOUR_API_KEY'"
+   cd backend
+   npm install
    ```
 
-5. Run the app:
+4. Create a `.env` file in the backend directory (using `.example.env` as a template):
 
-   ```bash
-   ng serve
+   ```plaintext
+   cp .example.env .env
+   ```
+
+5. Get an API key from ExchangeRate-API and add it to the backend `.env` file:
+
+   ```plaintext
+   PORT=5000
+   NODE_ENV=development
+   EXCHANGE_RATE_API_KEY=your_api_key_here
    ```
 
 ### Usage
 
-1. Run the development server:
+1. Start the backend server:
 
    ```bash
-   ng serve
+   cd backend
+   npm start
    ```
 
-2. Open your browser and navigate to:
+2. Start the Angular development server:
 
-   ```text
-   http://localhost:4200
+   ```bash
+   npm start
    ```
 
-3. You can now use the app to convert currencies.
+3. Open your browser and navigate to `http://localhost:4200` to view the app.
+4. Use the app to convert currencies by selecting the desired currencies and entering the amount.
+5. The converted amount will be displayed in real-time based on the latest exchange rates.
 
 ### Project Structure
 
 ```plaintext
-src/
-├── app/
-│   ├── services/
-│   │   ├── exchange-rate.service.ts
-│   ├── app.component.html
-│   ├── app.component.ts
-│   ├── app.component.scss
-│   └── app.conifg.ts
-|   └── app.routes.ts
-├── styles.scss
-└── index.html
+currency-converter-app/
+├── backend/                # Backend API
+│   ├── config/             # Configuration files
+│   ├── controllers/        # API controllers
+│   ├── routes/             # API routes
+│   ├── .env                # Environment variables
+│   ├── .env.example         # Example environment variables
+│   ├── .gitignore          # Git ignore file
+│   ├── index.js            # Application entry point
+│   ├── package.json        # Project dependencies
+│   └── README.md           # Backend documentation
+├── public/                # Public assets (images, icons)
+├── src/                    # Frontend application
+│   ├── app/                # Angular components and services
+│   ├── index.html          # Main HTML file
+│   ├── main.ts             # Angular entry point
+│   └── styles.scss         # Global styles
+├── .gitignore             # Git ignore file
+├── angular.json           # Angular configuration
+|── tailwind.config.js      # Tailwind CSS configuration
+├── package.json           # Project dependencies
+├── README.md              # Project documentation
+└── .gitignore             # Git ignore file
+...
 ```
 
 ### Built With
@@ -97,6 +119,8 @@ src/
 - [Angular](https://angular.io/) - Web framework
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - [ExchangeRate-API](https://www.exchangerate-api.com/) - Currency exchange rates API
+- [Node.js](https://nodejs.org/) - JavaScript runtime
+- [Express](https://expressjs.com/) - Web framework for Node.js
 
 ### License
 
