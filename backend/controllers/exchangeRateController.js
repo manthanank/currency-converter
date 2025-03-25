@@ -15,7 +15,7 @@ const getExchangeRates = async (req, res) => {
     const response = await axios.get(
       `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/${baseCurrency}`
     );
-    res.json(response);
+    res.json(response.data);
   } catch (error) {
     console.error("Error fetching exchange rates:", error.message);
     res.status(500).json({
