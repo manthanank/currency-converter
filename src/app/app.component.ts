@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ExchangeRateService } from './services/exchange-rate.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import { Meta } from '@angular/platform-browser';
 import { TrackService } from './services/track.service';
+import { Visit } from './models/visit.model';
 
 @Component({
   selector: 'app-root',
@@ -13,17 +14,42 @@ import { TrackService } from './services/track.service';
 })
 export class AppComponent implements OnInit {
   title = 'currency-converter';
-  exchangeRates: any = {};
-  amount: number = 1;
-  fromCurrency: string = 'USD';
-  toCurrency: string = 'INR';
-  convertedAmount: number = 0;
 
+  // Convert state to signals
+  exchangeRates = signal<Record<string, number>>({});
+  amount = signal<number>(1);
+  fromCurrency = signal<string>('USD');
+  toCurrency = signal<string>('INR');
+  visitorCount = signal<number>(0);
+
+  // Add computed signal for convertedAmount
+  convertedAmount = computed(() => {
+    const rates = this.exchangeRates();
+    const from = this.fromCurrency();
+    const to = this.toCurrency();
+
+    if (rates[from] && rates[to]) {
+      const rate = rates[to] / rates[from];
+      return this.amount() * rate;
+    }
+    return 0;
+  });
+
+  // Services
   meta = inject(Meta);
   trackService = inject(TrackService);
   exchangeRateService = inject(ExchangeRateService);
 
   constructor() {
+    this.setupMetaTags();
+  }
+
+  ngOnInit(): void {
+    this.trackVisit();
+    this.fetchExchangeRates();
+  }
+
+  private setupMetaTags(): void {
     this.meta.addTag({
       name: 'viewport',
       content: 'width=device-width, initial-scale=1',
@@ -56,12 +82,21 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.trackService.trackProjectVisit(this.title);
+  private trackVisit(): void {
+    this.trackService.trackProjectVisit(this.title).subscribe({
+      next: (response: Visit) => {
+        this.visitorCount.set(response.uniqueVisitors);
+      },
+      error: (err: Error) => {
+        console.error('Failed to track visit:', err);
+      },
+    });
+  }
+
+  private fetchExchangeRates(): void {
     this.exchangeRateService.getExchangeRates().subscribe({
       next: (response) => {
-        this.exchangeRates = response.conversion_rates;
-        this.convertCurrency();
+        this.exchangeRates.set(response.conversion_rates);
       },
       error: (error) => {
         console.error('Error fetching exchange rates', error);
@@ -69,16 +104,17 @@ export class AppComponent implements OnInit {
     });
   }
 
-  convertCurrency(): void {
-    if (
-      this.exchangeRates[this.fromCurrency] &&
-      this.exchangeRates[this.toCurrency]
-    ) {
-      const rate =
-        this.exchangeRates[this.toCurrency] /
-        this.exchangeRates[this.fromCurrency];
-      this.convertedAmount = this.amount * rate;
-    }
+  // Methods to update signals
+  updateAmount(newAmount: number): void {
+    this.amount.set(newAmount);
+  }
+
+  updateFromCurrency(currency: string): void {
+    this.fromCurrency.set(currency);
+  }
+
+  updateToCurrency(currency: string): void {
+    this.toCurrency.set(currency);
   }
 
   getAmountInWords(amount: number): string {
@@ -141,7 +177,7 @@ export class AppComponent implements OnInit {
       return tens[Math.floor(n / 10)] + (n % 10 ? '-' + units[n % 10] : '');
     };
 
-    let wholeNumber = Math.floor(Math.abs(amount)); // Changed from const to let
+    let wholeNumber = Math.floor(Math.abs(amount));
     const decimal = Math.round((Math.abs(amount) - wholeNumber) * 100);
     let words = amount < 0 ? 'Negative ' : '';
 

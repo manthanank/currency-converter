@@ -13,7 +13,7 @@
           Enter Amount
         </label>
         <div class="relative">
-          <input id="amount" type="number" [(ngModel)]="amount" (input)="convertCurrency()"
+          <input id="amount" type="number" [ngModel]="amount()" (ngModelChange)="updateAmount($event)"
             class="w-full p-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             placeholder="0.00" />
         </div>
@@ -26,9 +26,9 @@
           <label for="fromCurrency" class="block text-sm font-semibold text-gray-700 mb-1">
             From
           </label>
-          <select id="fromCurrency" [(ngModel)]="fromCurrency" (change)="convertCurrency()"
+          <select id="fromCurrency" [ngModel]="fromCurrency()" (ngModelChange)="updateFromCurrency($event)"
             class="w-full p-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all appearance-none">
-            @for (currency of exchangeRates | keyvalue; track $index) {
+            @for (currency of exchangeRates() | keyvalue; track $index) {
             <option [value]="currency.key">{{ currency.key }}</option>
             }
           </select>
@@ -46,9 +46,9 @@
           <label for="toCurrency" class="block text-sm font-semibold text-gray-700 mb-1">
             To
           </label>
-          <select id="toCurrency" [(ngModel)]="toCurrency" (change)="convertCurrency()"
+          <select id="toCurrency" [ngModel]="toCurrency()" (ngModelChange)="updateToCurrency($event)"
             class="w-full p-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all appearance-none">
-            @for (currency of exchangeRates | keyvalue; track $index) {
+            @for (currency of exchangeRates() | keyvalue; track $index) {
             <option [value]="currency.key">{{ currency.key }}</option>
             }
           </select>
@@ -67,19 +67,23 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
           <span class="text-sm font-medium text-gray-600">Converted Amount</span>
           <span class="text-lg sm:text-xl font-bold text-blue-600">
-            {{ convertedAmount | number:'1.2-2' }} {{ toCurrency }}
+            {{ convertedAmount() | number:'1.2-2' }} {{ toCurrency() }}
           </span>
         </div>
 
         <div class="border-t border-blue-100 pt-3">
           <p class="text-sm text-gray-600">
-            {{ amount }} {{ fromCurrency }} = {{ convertedAmount | number:'1.2-2' }} {{ toCurrency }}
+            {{ amount() }} {{ fromCurrency() }} = {{ convertedAmount() | number:'1.2-2' }} {{ toCurrency() }}
           </p>
           <p class="text-xs text-gray-500 mt-1 italic">
-            {{ getAmountInWords(convertedAmount) }}
+            {{ getAmountInWords(convertedAmount()) }}
           </p>
         </div>
       </div>
+    </div>
+
+    <div class="text-center mt-4 text-xs text-gray-500">
+      <span>👥 {{ visitorCount() }} unique visitors have used this converter</span>
     </div>
   </div>
 </div>
