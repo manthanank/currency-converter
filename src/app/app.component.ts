@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, effect } from '@angular/core';
 import { ExchangeRateService } from './services/exchange-rate.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
@@ -21,6 +21,9 @@ export class AppComponent implements OnInit {
   fromCurrency = signal<string>('USD');
   toCurrency = signal<string>('INR');
   visitorCount = signal<number>(0);
+  
+  // Theme state
+  darkMode = signal<boolean>(false);
 
   // Loading and error states
   isLoading = signal<boolean>(false);
@@ -48,11 +51,33 @@ export class AppComponent implements OnInit {
 
   constructor() {
     this.setupMetaTags();
+    
+    // Initialize theme from localStorage if available
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || 
+        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      this.darkMode.set(true);
+    }
+    
+    // Set up theme change effect
+    effect(() => {
+      if (this.darkMode()) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    });
   }
 
   ngOnInit(): void {
     this.trackVisit();
     this.fetchExchangeRates();
+  }
+
+  toggleTheme(): void {
+    this.darkMode.update(value => !value);
   }
 
   private setupMetaTags(): void {
