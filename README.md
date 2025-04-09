@@ -5,9 +5,12 @@ This is a simple currency converter application built using Angular and styled w
 ## Features
 
 - Convert between multiple currencies
-- Real-time exchange rates using an external API
+- Real-time exchange rates using ExchangeRate-API
+- Dark mode toggle with saved preferences
 - Responsive design with a modern UI
-- Built with Angular and Tailwind CSS for a clean and scalable codebase
+- Shows converted amount in words
+- Visitor tracking functionality
+- Built with Angular 19 and Tailwind CSS
 
 ## Preview
 
